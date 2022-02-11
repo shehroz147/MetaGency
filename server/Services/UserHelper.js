@@ -73,10 +73,6 @@ exports.createUser = async (email, password, fullName, userName, role = 'user') 
         _id: new mongoose.Types.ObjectId(),
         email: email,
         password: password,
-        fullName: fullName,
-        userName: userName,
-        profileImage: "default.jpg",
-        backgroundImage: "default.jpg",
         role: role
     });
     await user.save();
@@ -189,37 +185,6 @@ exports.foundUserCount = async (conditionObj) => {
     return User.find(conditionObj).countDocuments();
 }
 
-exports.showRequests = async (User, pageNo, searchValue = null) => {
-
-    let pg = GeneralHelper.getPaginationDetails(pageNo);
-    let requestCondition = [{ isDeleted: false, status: 'pending', to: User._id }];
-    if (GeneralHelper.isValueSet(searchValue)) {
-        searchValue = GeneralHelper.escapeLike(searchValue);
-        let regex = new RegExp(searchValue, 'i');
-
-
-        requestCondition.push({
-            $or: [
-                { "fullName": { $regex: regex } },
-                { "userName": { $regex: regex } },
-                { "email": { $regex: regex } }
-            ]
-        });
-    }
-    requestCondition = { $and: requestCondition }
-    let result = await FriendRequest.find(requestCondition)
-        .sort({ _id: -1 })
-        .skip(pg.skip)
-        .limit(pg.pageSize)
-        .exec();
-
-    let total = await FriendRequest.find(requestCondition).countDocuments();
-    return {
-        "pagination": GeneralHelper.makePaginationObject(pg.pageNo, pg.pageSize, pg.skip, total, result.length),
-        "data": result
-    };
-}
-
 exports.updatingUser = async (user_, request, res) => {
 
     let result = "";
@@ -251,52 +216,3 @@ exports.updatingUser = async (user_, request, res) => {
     return result;
 }
 
-exports.addGamerTag = async (user, GamerTags, res) => {
-    let result = "";
-    await User.updateOne({ _id: user._id }, { $set: { gamerTag: GamerTags } })
-        .exec()
-        .then(docs => {
-            result = docs;
-        })
-        .catch(err => {
-            res.status(500).json({
-                error: err
-            });
-        });
-
-    return result;
-}
-
-exports.sendRequest = async (user, receiver) => {
-    const friendRequest = new FriendRequest({
-        _id: new mongoose.Types.ObjectId(),
-        to: receiver._id,
-        from: user._id,
-        status: 'pending',
-    });
-    await friendRequest.save();
-}
-exports.findRequest = async (userId) => {
-    return await FriendRequest.findOne({ from: userId });
-}
-
-exports.acceptRequest = async (findObj) => {
-    return FriendRequest.updateOne(findObj, { $set: { status: 'accepted' } });
-}
-
-exports.addFriend = async (user, friend, res) => {
-    return User.updateOne(user, { $push: { friends: { friend } } });
-}
-exports.findFriend = async (userName, user) => {
-    return await User.findOne({ _id: user._id }, { friends: { $elemMatch: { userName: userName } } });
-};
-exports.createWithdrawalRequest = async (userName, accountType, accountNumber, withdrawalCoins) => {
-    const withdrawalRequest = new WithdrawalRequest({
-        _id: new mongoose.Types.ObjectId(),
-        userName: userName,
-        accountType: accountType,
-        accountNumber: accountNumber,
-        withdrawalCoins: withdrawalCoins
-    });
-    await withdrawalRequest.save();
-}
