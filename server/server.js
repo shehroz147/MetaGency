@@ -5,7 +5,7 @@ const express = require('express');
 const http      = require('http');
 const https     = require('https');
 const fs        = require('fs');
-const app       = require('./app');
+const app       =express();
 const PORT = process.env.PORT || 3000;
 
 const buildPath = path.join(__dirname, '..', 'build');
@@ -21,7 +21,7 @@ const options = {
 const server =  process.env.MODE === "DEV" ? http.createServer(app) : https.createServer(options,app);
 
 
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`server started on port ${PORT}`);
 });
 
