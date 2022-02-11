@@ -4,13 +4,6 @@ const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const moment = require("moment");
-const {json} = require("body-parser");
-const paypal = require('paypal-rest-sdk');
-const path = require('path');
-const ejs = require('ejs');
-const http = require('http');
-
 //edited
 
 
@@ -21,7 +14,7 @@ const userRoutes = require('./Routes/User');
 const profileRoutes = require('./Routes/Profile');
 const imageRoutes = require('./Routes/Image');
 const paymentRoutes = require('./Routes/Payment');
-const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/battleground';
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/metagency';
 
 // Connect Mongo DB
 mongoose.connect(dbUrl, {useNewUrlParser: true, useCreateIndex: true,useUnifiedTopology:true}, (err) => {

@@ -3,13 +3,13 @@ const express = require("express");
 const router = express.Router();
 
 // Middlewares
-const jwtAuth = require('../Middleware/JWTAuth');
+// const jwtAuth = require('../Middleware/JWTAuth');
 
 // Controllers
 const UserController = require('../Controllers/UserController');
 
 
-router.get("/signup", UserController.signup);
+router.post("/signup", UserController.signup);
 router.post("/signup-admin", UserController.signupAdmin);
 router.get("/list", UserController.findAllUsers);
 router.post("/update", UserController.updateUser);
