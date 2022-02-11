@@ -9,7 +9,7 @@ const jwtAuth = require('../Middleware/JWTAuth');
 const UserController = require('../Controllers/UserController');
 
 
-router.post("/signup", UserController.signup);
+router.get("/signup", UserController.signup);
 router.post("/signup-admin", UserController.signupAdmin);
 router.get("/list", UserController.findAllUsers);
 router.post("/update", UserController.updateUser);

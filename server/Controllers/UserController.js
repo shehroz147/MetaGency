@@ -12,12 +12,14 @@ const User = require("../Models/User");
 const Message = require("../Constants/Message.js");
 const ResponseCode = require("../Constants/ResponseCode.js");
 const Role = require("../Constants/Role.js");
+
+
 exports.signup = async (req, res, next) => {
     //Signup function to add a new user  when the user provides required info
     let request = req.body;
     let response = ResponseHelper.getDefaultResponse();
     //checking required info
-    if (!request.fullName || !request.userName || !request.email || !request.password) {
+    if (!request.email || !request.password) {
         let response = await ResponseHelper.setResponse(ResponseCode.NOT_SUCCESS, Message.MISSING_PARAMETER);
         return res.status(response.code).json(response);
     }
@@ -29,8 +31,8 @@ exports.signup = async (req, res, next) => {
     }
     let password = await GeneralHelper.bcryptPassword(request.password);
     //adding user to database
-    let user = await UserHelper.createUser(request.email.toLowerCase(), password, request.fullName, request.userName, 'user');
-    response = ResponseHelper.setResponse(ResponseCode.SUCCESS, Message.REQUEST_SUCCESSFUL);
+    let user = await UserHelper.createUser(request.email.toLowerCase(), password, 'user');
+        response = ResponseHelper.setResponse(ResponseCode.SUCCESS, Message.REQUEST_SUCCESSFUL);
     return res.status(response.code).json(response);
 };
 
